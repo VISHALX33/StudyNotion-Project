@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   accountType: {
     type: String,
     enum: ["Student", "Instructor", "Admin"],
-    required: "Student",
+    default: "Student",
   },
   active: {
     type: Boolean,
@@ -61,10 +61,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     // required:true,
   },
-  token:{
-    type:String,
-  },
- 
 
   courseProgress: [
     {

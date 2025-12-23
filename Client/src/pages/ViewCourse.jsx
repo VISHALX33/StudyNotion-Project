@@ -29,8 +29,8 @@ const ViewCourse = () => {
         // Set first section and subsection as active
         if (result.courseDetails?.courseContent?.length > 0) {
           setActiveSection(result.courseDetails.courseContent[0]);
-          if (result.courseDetails.courseContent[0].subSection?.length > 0) {
-            setActiveSubsection(result.courseDetails.courseContent[0].subSection[0]);
+          if (result.courseDetails.courseContent[0].SubSection?.length > 0) {
+            setActiveSubsection(result.courseDetails.courseContent[0].SubSection[0]);
           }
         }
       } else {
@@ -83,7 +83,7 @@ const ViewCourse = () => {
           </button>
           <h2 className="text-xl font-bold text-black">{courseDetails.courseName}</h2>
           <p className="text-sm text-black mt-2">
-            {completedLectures.length} / {courseDetails.courseContent.reduce((acc, section) => acc + (section.subSection?.length || 0), 0)} Completed
+            {completedLectures.length} / {courseDetails.courseContent.reduce((acc, section) => acc + (section.SubSection?.length || 0), 0)} Completed
           </p>
         </div>
 
@@ -102,13 +102,13 @@ const ViewCourse = () => {
                   Section {index + 1}: {section.sectionName}
                 </p>
                 <p className="text-xs text-black mt-1">
-                  {section.subSection?.length || 0} Lectures
+                  {section.SubSection?.length || 0} Lectures
                 </p>
               </button>
 
               {activeSection?._id === section._id && (
                 <div className="mt-2 ml-4 space-y-1">
-                  {section.subSection?.map((lecture) => (
+                  {section.SubSection?.map((lecture) => (
                     <button
                       key={lecture._id}
                       onClick={() => setActiveSubsection(lecture)}
@@ -138,17 +138,30 @@ const ViewCourse = () => {
         {activeSubsection ? (
           <div className="p-8">
             <div className="max-w-5xl mx-auto">
-              {/* Video Player Placeholder */}
-              <div className="bg-black rounded-lg mb-6" style={{ paddingBottom: "56.25%", position: "relative" }}>
-                <div className="absolute inset-0 flex items-center justify-center text-white">
-                  <div className="text-center">
-                    <FiPlayCircle className="w-16 h-16 mx-auto mb-4" />
-                    <p className="text-xl">Video: {activeSubsection.title}</p>
-                    <p className="text-sm text-gray-400 mt-2">
-                      Video URL: {activeSubsection.videoUrl || "Not available"}
-                    </p>
+              {/* Video Player */}
+              <div className="bg-black rounded-lg mb-6 overflow-hidden">
+                {activeSubsection.videoUrl ? (
+                  <video
+                    key={activeSubsection._id}
+                    controls
+                    controlsList="nodownload"
+                    className="w-full aspect-video"
+                    onEnded={() => handleLectureComplete(activeSubsection._id)}
+                  >
+                    <source src={activeSubsection.videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <div className="aspect-video flex items-center justify-center text-white">
+                    <div className="text-center">
+                      <FiPlayCircle className="w-16 h-16 mx-auto mb-4" />
+                      <p className="text-xl">No video available</p>
+                      <p className="text-sm text-gray-400 mt-2">
+                        This lecture doesn't have a video yet
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Lecture Info */}
@@ -181,7 +194,7 @@ const ViewCourse = () => {
 
                 {activeSubsection.timeDuration && (
                   <p className="text-sm text-black">
-                    Duration: {activeSubsection.timeDuration} seconds
+                    Duration: {activeSubsection.timeDuration}
                   </p>
                 )}
               </div>

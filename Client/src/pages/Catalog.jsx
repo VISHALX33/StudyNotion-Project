@@ -20,6 +20,15 @@ const Catalog = () => {
     fetchCourses();
   }, []);
 
+  const calculateAverageRating = (course) => {
+    if (!course?.ratingAndReviews || course.ratingAndReviews.length === 0) {
+      return { avgRating: 0, totalReviews: 0 };
+    }
+    const totalReviews = course.ratingAndReviews.length;
+    const avgRating = course.ratingAndReviews.reduce((acc, review) => acc + (review.rating || 0), 0) / totalReviews;
+    return { avgRating: avgRating.toFixed(1), totalReviews };
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -69,12 +78,15 @@ const Catalog = () => {
                   <div className="flex items-center gap-2 text-sm">
                     <div className="flex items-center gap-1 text-primary-500">
                       <Star className="w-4 h-4 fill-current" />
-                      <span>4.5</span>
+                      <span>{calculateAverageRating(course).avgRating || "New"}</span>
                     </div>
                     <div className="flex items-center gap-1 text-dark-600">
                       <Users className="w-4 h-4" />
                       <span>{course.studentsEnrolled?.length || 0}</span>
                     </div>
+                    <span className="text-dark-500">
+                      ({calculateAverageRating(course).totalReviews} reviews)
+                    </span>
                   </div>
                   <div className="flex items-center justify-between pt-3 border-t border-dark-200">
                     <span className="text-2xl font-bold text-primary-500">

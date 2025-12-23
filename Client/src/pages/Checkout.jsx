@@ -129,8 +129,8 @@ const Checkout = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Order Summary */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg border border-dark-200 p-6 mb-6">
-                <h2 className="text-xl font-bold text-dark-900 mb-4">Order Summary</h2>
+              <div className="bg-white rounded-lg border text-black border-dark-200 p-6 mb-6">
+                <h2 className="text-xl font-bold text-black mb-4">Order Summary</h2>
                 <div className="space-y-4">
                   {cart.map((course) => (
                     <div key={course._id} className="flex gap-4 pb-4 border-b border-dark-200">
@@ -140,13 +140,13 @@ const Checkout = () => {
                         className="w-24 h-16 object-cover rounded"
                       />
                       <div className="flex-1">
-                        <h3 className="font-semibold text-dark-900">{course.courseName}</h3>
-                        <p className="text-sm text-dark-600">
+                        <h3 className="font-semibold text-black">{course.courseName}</h3>
+                        <p className="text-sm text-black">
                           By {course.instructor?.firstName} {course.instructor?.lastName}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-dark-900">₹{course.price}</p>
+                        <p className="font-bold text-black">₹{course.price}</p>
                       </div>
                     </div>
                   ))}
@@ -156,21 +156,21 @@ const Checkout = () => {
 
             {/* Payment Section */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg border border-dark-200 p-6 sticky top-4">
-                <h2 className="text-xl font-bold text-dark-900 mb-4">Payment Details</h2>
+              <div className="bg-white rounded-lg border text-black border-dark-200 p-6 sticky top-4">
+                <h2 className="text-xl font-bold text-black mb-4">Payment Details</h2>
                 
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-black">
                     <span>Subtotal ({cart.length} items)</span>
                     <span>₹{total}</span>
                   </div>
-                  <div className="flex justify-between text-dark-700">
+                  <div className="flex justify-between text-black">
                     <span>Tax</span>
                     <span>₹0</span>
                   </div>
                   <div className="border-t border-dark-200 pt-3 flex justify-between">
-                    <span className="text-lg font-bold text-dark-900">Total</span>
-                    <span className="text-lg font-bold text-dark-900">₹{total}</span>
+                    <span className="text-lg font-bold text-black">Total</span>
+                    <span className="text-lg font-bold text-black">₹{total}</span>
                   </div>
                 </div>
 
@@ -183,7 +183,7 @@ const Checkout = () => {
                   {loading ? "Processing..." : "Proceed to Payment"}
                 </button>
 
-                <p className="text-xs text-dark-600 text-center mt-4">
+                <p className="text-xs text-black text-center mt-4">
                   By completing your purchase, you agree to our Terms of Service
                 </p>
               </div>

@@ -5,6 +5,9 @@ const CourseProgress = require("../models/CourseProgress")
 const Course = require("../models/Course")
 
 exports.updateCourseProgress = async (req, res) => {
+  console.log("🎯 updateCourseProgress CONTROLLER HIT");
+  console.log("Request body:", req.body);
+  
   const { courseId, subsectionId } = req.body
   const userId = req.user.id
 
@@ -23,24 +26,36 @@ exports.updateCourseProgress = async (req, res) => {
 
     if (!courseProgress) {
       // If course progress doesn't exist, create a new one
-      return res.status(404).json({
-        success: false,
-        message: "Course progress Does Not Exist",
-      })
+      console.log("📝 Creating new CourseProgress document");
+      courseProgress = await CourseProgress.create({
+        courseID: courseId,
+        userId: userId,
+        completedvideos: [subsectionId],
+      });
+      console.log("✅ CourseProgress created:", courseProgress);
+      return res.status(200).json({ 
+        success: true,
+        message: "Course progress created and updated" 
+      });
     } else {
       // If course progress exists, check if the subsection is already completed
-      if (courseProgress.completedVideos.includes(subsectionId)) {
+      if (courseProgress.completedvideos.includes(subsectionId)) {
         return res.status(400).json({ error: "Subsection already completed" })
       }
 
       // Push the subsection into the completedVideos array
-      courseProgress.completedVideos.push(subsectionId)
+      courseProgress.completedvideos.push(subsectionId)
+      console.log("➕ Added subsectionId to completedvideos");
     }
 
     // Save the updated course progress
     await courseProgress.save()
+    console.log("💾 CourseProgress saved successfully");
 
-    return res.status(200).json({ message: "Course progress updated" })
+    return res.status(200).json({ 
+      success: true,
+      message: "Course progress updated" 
+    })
   } catch (error) {
     console.error(error)
     return res.status(500).json({ error: "Internal server error" })

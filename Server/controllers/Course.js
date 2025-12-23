@@ -129,6 +129,13 @@ exports.getAllCourses = async (req, res) =>{
         )
         .populate("instructor")
         .populate("category")
+        .populate({
+            path: "ratingAndReviews",
+            populate: {
+                path: "user",
+                select: "firstName lastName image",
+            },
+        })
         .exec();
 
         return res.status(200).json({
@@ -166,7 +173,13 @@ exports.getCourseDetails = async(req, res) =>{
                                         }
                                     )
                                     .populate("category")
-                                    //.populate("ratingAndreviews")
+                                    .populate({
+                                        path: "ratingAndReviews",
+                                        populate: {
+                                            path: "user",
+                                            select: "firstName lastName image",
+                                        },
+                                    })
                                     .populate({
                                         path:"courseContent",
                                         populate:{
@@ -264,8 +277,8 @@ exports.getFullCourseDetails = async (req, res) => {
       data: {
         courseDetails,
         totalDuration,
-        completedVideos: courseProgressCount?.completedVideos
-          ? courseProgressCount?.completedVideos
+        completedVideos: courseProgressCount?.completedvideos
+          ? courseProgressCount?.completedvideos
           : [],
       },
     })
@@ -301,15 +314,13 @@ exports.editCourse = async (req, res) => {
     }
 
     // Update only the fields that are present in the request body
-    for (const key in updates) {
-      if (updates.hasOwnProperty(key)) {
-        if (key === "tag" || key === "instructions") {
-          course[key] = JSON.parse(updates[key])
-        } else {
-          course[key] = updates[key]
-        }
-      }
-    }
+    for (const key of Object.keys(updates)) {
+  if (key === "tag" || key === "instructions") {
+    course[key] = JSON.parse(updates[key])
+  } else {
+    course[key] = updates[key]
+  }
+}
 
     await course.save()
 
@@ -327,7 +338,7 @@ exports.editCourse = async (req, res) => {
       .populate({
         path: "courseContent",
         populate: {
-          path: "subSection",
+          path: "SubSection",
         },
       })
       .exec()

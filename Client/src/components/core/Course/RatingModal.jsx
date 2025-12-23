@@ -5,10 +5,10 @@ import { courseEndpoints } from "../../../services/apis";
 import { toast } from "react-hot-toast";
 import { FiX, FiStar } from "react-icons/fi";
 
-const RatingModal = ({ courseId, onClose, onRatingSubmit }) => {
+const RatingModal = ({ courseId, onClose, onRatingSubmit, existingReview }) => {
   const { token } = useSelector((state) => state.auth);
-  const [rating, setRating] = useState(0);
-  const [review, setReview] = useState("");
+  const [rating, setRating] = useState(existingReview?.rating || 0);
+  const [review, setReview] = useState(existingReview?.review || "");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -34,7 +34,9 @@ const RatingModal = ({ courseId, onClose, onRatingSubmit }) => {
       );
 
       if (response.data.success) {
-        toast.success("Rating and review submitted successfully");
+        toast.success(existingReview 
+          ? "Rating and review updated successfully" 
+          : "Rating and review submitted successfully");
         onRatingSubmit();
         onClose();
       }
@@ -49,7 +51,9 @@ const RatingModal = ({ courseId, onClose, onRatingSubmit }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg max-w-md w-full p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-dark-900">Rate this Course</h2>
+          <h2 className="text-2xl font-bold text-dark-900">
+            {existingReview ? "Edit Your Review" : "Rate this Course"}
+          </h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-dark-100 rounded-full transition"
@@ -64,7 +68,7 @@ const RatingModal = ({ courseId, onClose, onRatingSubmit }) => {
             <label className="block text-sm font-medium text-black mb-3">
               Your Rating
             </label>
-            <div className="flex gap-2 justify-center">
+            <div className="flex gap-2 justify-center ">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
@@ -98,7 +102,7 @@ const RatingModal = ({ courseId, onClose, onRatingSubmit }) => {
               value={review}
               onChange={(e) => setReview(e.target.value)}
               rows="4"
-              className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-2 border text-black border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="Share your thoughts about this course..."
             />
           </div>
@@ -108,7 +112,7 @@ const RatingModal = ({ courseId, onClose, onRatingSubmit }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-dark-300 text-dark-900 rounded-md hover:bg-dark-100 transition"
+              className="flex-1 px-4 py-2 border border-dark-300 text-black  rounded-md  transition"
             >
               Cancel
             </button>
@@ -117,7 +121,7 @@ const RatingModal = ({ courseId, onClose, onRatingSubmit }) => {
               disabled={loading}
               className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition disabled:opacity-50"
             >
-              {loading ? "Submitting..." : "Submit Rating"}
+              {loading ? "Submitting..." : existingReview ? "Update Rating" : "Submit Rating"}
             </button>
           </div>
         </form>

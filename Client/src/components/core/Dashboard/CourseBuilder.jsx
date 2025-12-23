@@ -4,12 +4,16 @@ import { FiPlus, FiEdit2, FiTrash2, FiChevronDown, FiChevronUp } from "react-ico
 import { toast } from "react-hot-toast";
 import { createSection, updateSection, deleteSection } from "../../../services/operations/courseAPI";
 import { useSelector } from "react-redux";
+import SubSectionModal from "./SubSectionModal";
 
 const CourseBuilder = ({ course, setCourse }) => {
   const { token } = useSelector((state) => state.auth);
   const [editSectionId, setEditSectionId] = useState(null);
   const [addSection, setAddSection] = useState(false);
   const [expandedSections, setExpandedSections] = useState([]);
+  const [showSubSectionModal, setShowSubSectionModal] = useState(false);
+  const [currentSectionId, setCurrentSectionId] = useState(null);
+  const [editingSubSection, setEditingSubSection] = useState(null);
   
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
 
@@ -84,21 +88,33 @@ const CourseBuilder = ({ course, setCourse }) => {
     reset();
   };
 
+  const handleAddLecture = (sectionId) => {
+    setCurrentSectionId(sectionId);
+    setEditingSubSection(null);
+    setShowSubSectionModal(true);
+  };
+
+  const handleEditLecture = (sectionId, subsection) => {
+    setCurrentSectionId(sectionId);
+    setEditingSubSection(subsection);
+    setShowSubSectionModal(true);
+  };
+
   return (
     <div className="bg-white rounded-lg border border-dark-200 p-6">
-      <h2 className="text-2xl font-bold text-dark-900 mb-6">Course Builder</h2>
+      <h2 className="text-2xl font-bold text-black mb-6">Course Builder</h2>
 
       {/* Add/Edit Section Form */}
       {(addSection || editSectionId) && (
         <form
           onSubmit={handleSubmit(editSectionId ? handleEditSection : handleAddSection)}
-          className="mb-6 p-4 bg-dark-50 rounded-lg"
+          className="mb-6 p-4 text-black bg-dark-50 rounded-lg"
         >
           <input
             type="text"
             placeholder="Enter Section Name"
             {...register("sectionName", { required: "Section name is required" })}
-            className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 mb-2"
+            className="w-full px-4 py-2 border text-black border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 mb-2"
           />
           {errors.sectionName && (
             <p className="text-red-500 text-sm mb-2">{errors.sectionName.message}</p>
@@ -177,6 +193,14 @@ const CourseBuilder = ({ course, setCourse }) => {
               {/* Subsections */}
               {expandedSections.includes(section._id) && (
                 <div className="p-4 border-t border-dark-200">
+                  <button
+                    onClick={() => handleAddLecture(section._id)}
+                    className="flex items-center gap-2 px-3 py-2 bg-dark-100 text-dark-900 rounded-md hover:bg-dark-200 transition mb-3 text-sm"
+                  >
+                    <FiPlus className="w-4 h-4" />
+                    Add Lecture
+                  </button>
+                  
                   {section.SubSection?.length === 0 ? (
                     <p className="text-dark-700 text-sm">No lectures in this section yet</p>
                   ) : (
@@ -186,7 +210,7 @@ const CourseBuilder = ({ course, setCourse }) => {
                           key={subsection._id}
                           className="flex items-center justify-between p-3 bg-white rounded border border-dark-200"
                         >
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 flex-1">
                             <span className="text-sm text-dark-600">
                               {index + 1}.
                             </span>
@@ -196,6 +220,14 @@ const CourseBuilder = ({ course, setCourse }) => {
                                 {subsection.timeDuration}
                               </p>
                             </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleEditLecture(section._id, subsection)}
+                              className="p-2 text-dark-700 hover:bg-dark-200 rounded transition"
+                            >
+                              <FiEdit2 className="w-4 h-4" />
+                            </button>
                           </div>
                         </div>
                       ))}
@@ -207,6 +239,17 @@ const CourseBuilder = ({ course, setCourse }) => {
           ))
         )}
       </div>
+
+      {/* SubSection Modal */}
+      {showSubSectionModal && (
+        <SubSectionModal
+          sectionId={currentSectionId}
+          course={course}
+          setCourse={setCourse}
+          onClose={() => setShowSubSectionModal(false)}
+          subsection={editingSubSection}
+        />
+      )}
     </div>
   );
 };

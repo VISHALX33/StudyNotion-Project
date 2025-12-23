@@ -4,42 +4,50 @@ export const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Add response interceptor to handle token expiration
+// Response interceptor (token expiry)
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // If token expired or invalid, clear localStorage and redirect to login
     if (error.response?.status === 401) {
-      const message = error.response?.data?.message || '';
-      if (message.includes('expired') || message.includes('invalid')) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+      const message = error.response?.data?.message || "";
+
+      if (message.includes("expired") || message.includes("invalid")) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
       }
     }
     return Promise.reject(error);
   }
 );
 
-export const apiConnector = (method, url, bodyData, headers, params) => {
-  // Get token from localStorage
+export const apiConnector = (
+  method,
+  url,
+  bodyData = null,
+  headers = {},
+  params = null
+) => {
   const token = localStorage.getItem("token");
-  
-  // Merge headers with Authorization if token exists
+
+  // 🛑 HARD GUARD
+  if (!url || url.includes("undefined")) {
+    throw new Error(`❌ Invalid API URL: ${url}`);
+  }
+
   const finalHeaders = {
     ...headers,
   };
-  
-  // Only add Authorization header if token exists and it's not already present
-  if (token && !finalHeaders.Authorization) {
+
+  if (token) {
     finalHeaders.Authorization = `Bearer ${token}`;
   }
 
   return axiosInstance({
-    method: `${method}`,
-    url: `${url}`,
-    data: bodyData ? bodyData : null,
-    headers: Object.keys(finalHeaders).length > 0 ? finalHeaders : null,
-    params: params ? params : null,
+    method,
+    url,               // ✅ FULL URL ONLY
+    data: bodyData,
+    headers: finalHeaders,
+    params,
   });
 };

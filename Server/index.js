@@ -41,10 +41,17 @@ app.use(
 // cloudinary connection
 cloudinaryConnect();
 
+// Debug middleware - log all incoming requests
+app.use((req, res, next) => {
+  console.log(`📨 ${req.method} ${req.path}`);
+  next();
+});
+
 // routes
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/course", courseRoutes);
+console.log("📍 Course routes mounted at /api/v1/course");
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/reach", contactRoutes);
 

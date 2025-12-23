@@ -78,16 +78,16 @@ const MyCourses = () => {
               <table className="w-full">
                 <thead className="bg-dark-50 border-b border-dark-200">
                   <tr>
-                    <th className="text-left py-4 px-6 text-black font-semibold">Course</th>
-                    <th className="text-left py-4 px-6 text-black font-semibold">Duration</th>
-                    <th className="text-left py-4 px-6 text-black font-semibold">Price</th>
-                    <th className="text-center py-4 px-6 text-black font-semibold">Status</th>
-                    <th className="text-center py-4 px-6 text-black font-semibold">Actions</th>
+                    <th className="text-left py-4 px-6 text-white font-semibold">Course</th>
+                    <th className="text-left py-4 px-6 text-white font-semibold">Duration</th>
+                    <th className="text-left py-4 px-6 text-white font-semibold">Price</th>
+                    <th className="text-center py-4 px-6 text-white font-semibold">Status</th>
+                    <th className="text-center py-4 px-6 text-white font-semibold">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {courses.map((course) => (
-                    <tr key={course._id} className="border-b border-dark-200 hover:bg-dark-50">
+                    <tr key={course._id} className="border-b border-dark-200 ">
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-4">
                           <img

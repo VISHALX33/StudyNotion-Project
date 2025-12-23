@@ -154,7 +154,7 @@ const Settings = () => {
               <input
                 type="text"
                 {...register("firstName", { required: "First name is required" })}
-                className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 border border-dark-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="Enter first name"
               />
               {errors.firstName && (
@@ -169,7 +169,7 @@ const Settings = () => {
               <input
                 type="text"
                 {...register("lastName", { required: "Last name is required" })}
-                className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 border border-dark-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="Enter last name"
               />
               {errors.lastName && (
@@ -184,7 +184,7 @@ const Settings = () => {
               <input
                 type="date"
                 {...register("dateofbirth")}
-                className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 border border-dark-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
 
@@ -194,7 +194,7 @@ const Settings = () => {
               </label>
               <select
                 {...register("gender", { required: "Gender is required" })}
-                className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 border border-dark-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
@@ -219,7 +219,7 @@ const Settings = () => {
                     message: "Enter a valid 10-digit number",
                   },
                 })}
-                className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 border border-dark-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="Enter contact number"
               />
               {errors.contactNumber && (
@@ -235,19 +235,21 @@ const Settings = () => {
             <textarea
               {...register("about")}
               rows="4"
-              className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-2 border text-black border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="Write something about yourself"
             />
           </div>
 
           <div className="flex justify-end gap-4 mt-6">
             <button
-              type="button"
-              onClick={() => navigate("/dashboard/my-profile")}
-              className="px-6 py-2 border border-dark-300 text-black rounded-md hover:bg-dark-100 transition"
-            >
-              Cancel
-            </button>
+  type="button"
+  onClick={() => navigate("/dashboard/my-profile")}
+  className="px-6 py-2 border border-dark-300 text-black rounded-md 
+             hover:bg-dark-100 hover:text-white transition"
+>
+  Cancel
+</button>
+
             <button
               type="submit"
               disabled={loading}

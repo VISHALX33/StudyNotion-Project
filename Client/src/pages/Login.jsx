@@ -49,6 +49,7 @@ const Login = () => {
               <input
                 required
                 type="email"
+                id="email"
                 name="email"
                 value={email}
                 onChange={handleOnChange}
@@ -65,6 +66,7 @@ const Login = () => {
                 <input
                   required
                   type={showPassword ? "text" : "password"}
+                  id="password"
                   name="password"
                   value={password}
                   onChange={handleOnChange}

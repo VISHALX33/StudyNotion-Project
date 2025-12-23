@@ -1,17 +1,20 @@
 import { toast } from "react-hot-toast";
 import { apiConnector } from "../apiconnector";
-import { profileEndpoints } from "../apis";
+import { profileEndpoints, settingsEndpoints } from "../apis";
 import { logout } from "./authAPI";
 import { setUser } from "../../redux/slices/profileSlice";
 
 const {
   GET_USER_DETAILS_API,
-  UPDATE_PROFILE_API,
-  UPDATE_DISPLAY_PICTURE_API,
-  DELETE_PROFILE_API,
   GET_USER_ENROLLED_COURSES_API,
   GET_INSTRUCTOR_DATA_API,
 } = profileEndpoints;
+
+const {
+  UPDATE_PROFILE_API,
+  UPDATE_DISPLAY_PICTURE_API,
+  DELETE_PROFILE_API,
+} = settingsEndpoints;
 
 export function getUserDetails(token, navigate) {
   return async (dispatch) => {

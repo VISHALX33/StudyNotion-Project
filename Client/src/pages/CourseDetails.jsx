@@ -3,8 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCourseDetails } from "../services/operations/courseDetailsAPI";
 import { addToCart } from "../redux/slices/cartSlice";
-import { Star, Clock, Users, BookOpen } from "lucide-react";
+import { Star, Clock, Users, BookOpen, MessageSquare } from "lucide-react";
 import { toast } from "react-hot-toast";
+import RatingModal from "../components/core/Course/RatingModal";
+import { createRating } from "../services/operations/ratingAPI";
 
 const CourseDetails = () => {
   const { courseId } = useParams();
@@ -16,12 +18,14 @@ const CourseDetails = () => {
   
   const [courseData, setCourseData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showRatingModal, setShowRatingModal] = useState(false);
 
   useEffect(() => {
     const getCourseDetails = async () => {
       try {
         const result = await fetchCourseDetails(courseId);
         console.log("Course Details Result:", result);
+        console.log("Rating and Reviews:", result?.data?.ratingAndReviews);
         setCourseData(result?.data);
       } catch (error) {
         console.log("Could not fetch course details");
@@ -30,6 +34,30 @@ const CourseDetails = () => {
     };
     getCourseDetails();
   }, [courseId]);
+
+  const calculateAverageRating = () => {
+    if (!courseData?.ratingAndReviews || courseData.ratingAndReviews.length === 0) {
+      return { avgRating: 0, totalReviews: 0 };
+    }
+    const totalReviews = courseData.ratingAndReviews.length;
+    const avgRating = courseData.ratingAndReviews.reduce((acc, review) => acc + (review.rating || 0), 0) / totalReviews;
+    return { avgRating: avgRating.toFixed(1), totalReviews };
+  };
+
+  const handleRatingSubmit = async () => {
+    setShowRatingModal(false);
+    // Refresh course details
+    const result = await fetchCourseDetails(courseId);
+    setCourseData(result?.data);
+  };
+
+  // Check if user already reviewed this course
+  const getUserExistingReview = () => {
+    if (!user || !courseData?.ratingAndReviews) return null;
+    return courseData.ratingAndReviews.find(
+      (review) => review.user?._id === user._id || review.user === user._id
+    );
+  };
 
   const handleAddToCart = () => {
     if (!token) {
@@ -119,11 +147,15 @@ const CourseDetails = () => {
               <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-2 text-primary-500">
                   <Star className="w-5 h-5 fill-current" />
-                  <span className="font-semibold">4.5</span>
+                  <span className="font-semibold">{calculateAverageRating().avgRating || "New"}</span>
                 </div>
                 <div className="flex items-center gap-2 text-dark-700">
                   <Users className="w-5 h-5" />
                   <span>{courseData.studentsEnrolled?.length || 0} Students</span>
+                </div>
+                <div className="flex items-center gap-2 text-dark-700">
+                  <MessageSquare className="w-5 h-5" />
+                  <span>{calculateAverageRating().totalReviews} Reviews</span>
                 </div>
               </div>
 
@@ -227,6 +259,64 @@ const CourseDetails = () => {
                 </ul>
               </div>
             )}
+
+            {/* Reviews Section */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-dark-900">
+                  Student Reviews ({calculateAverageRating().totalReviews})
+                </h2>
+                {token && user?.accountType === "Student" && 
+                  courseData?.studentsEnrolled?.includes(user?._id) && (
+                  <button
+                    onClick={() => setShowRatingModal(true)}
+                    className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition font-medium"
+                  >
+                    {getUserExistingReview() ? "Edit Your Review" : "Write a Review"}
+                  </button>
+                )}
+              </div>
+
+              {courseData?.ratingAndReviews && courseData.ratingAndReviews.length > 0 ? (
+                <div className="space-y-4">
+                  {courseData.ratingAndReviews.slice(0, 5).map((review, index) => (
+                    <div key={index} className="bg-dark-100 border border-dark-200 rounded-lg p-4">
+                      <div className="flex items-start gap-3">
+                        <img
+                          src={review.user?.image || "https://via.placeholder.com/40"}
+                          alt={review.user?.firstName}
+                          className="w-10 h-10 rounded-full"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="font-semibold text-dark-900">
+                              {review.user?.firstName} {review.user?.lastName}
+                            </p>
+                            <div className="flex items-center gap-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-4 h-4 ${
+                                    i < review.rating
+                                      ? "text-primary-500 fill-current"
+                                      : "text-dark-300"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <p className="text-dark-700 text-sm">{review.review}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 bg-dark-100 rounded-lg">
+                  <p className="text-dark-600">No reviews yet. Be the first to review this course!</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -269,6 +359,16 @@ const CourseDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Rating Modal */}
+      {showRatingModal && (
+        <RatingModal
+          courseId={courseId}
+          onClose={() => setShowRatingModal(false)}
+          onRatingSubmit={handleRatingSubmit}
+          existingReview={getUserExistingReview()}
+        />
+      )}
     </div>
   );
 };

@@ -77,7 +77,7 @@ exports.categoryPageDetails = async (req, res) =>{
                                          _id: {$ne: categoryId},       
                                     })
                                     .populate("courses")
-                                    exec();
+                                    .exec();
           //get top 10 selling courses
 
           //return response
@@ -99,4 +99,42 @@ exports.categoryPageDetails = async (req, res) =>{
     }
 };
 
+// Delete Category (Admin only)
 
+exports.deleteCategory = async (req, res) => {
+    try {
+        const { categoryId } = req.params;
+
+        // Validation
+        if (!categoryId) {
+            return res.status(400).json({
+                success: false,
+                message: "Category ID is required",
+            });
+        }
+
+        // Check if category exists
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(404).json({
+                success: false,
+                message: "Category not found",
+            });
+        }
+
+        // Delete category
+        await Category.findByIdAndDelete(categoryId);
+
+        // Return response
+        return res.status(200).json({
+            success: true,
+            message: "Category deleted successfully",
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};

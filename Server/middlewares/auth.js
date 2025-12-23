@@ -44,15 +44,18 @@ exports.auth = async (req, res, next) =>{
 // isStudent
 exports.isStudent = async (req, res, next) =>{
     try{
+        console.log("🔐 isStudent middleware - accountType:", req.user.accountType);
         if(req.user.accountType !== "Student"){
             return res.status(401).json({
                 success:false,
                 message:"This is a protected route for Students only",
             });
         }
+        console.log("✅ isStudent middleware passed");
         next();
     }
     catch(error){
+        console.log("❌ isStudent middleware error:", error);
         return res.status(401).json({
             success:false,
             message:"User role cannot be verified, Please try again",

@@ -1,5 +1,7 @@
 const express = require("express");
-const router = express.Router()
+const router = express.Router();
+
+console.log("🔥🔥🔥 COURSE ROUTES FILE LOADED 🔥🔥🔥");
 
 // Import the controllers
 
@@ -7,7 +9,7 @@ const router = express.Router()
 const { createCourse, getAllCourses,getCourseDetails,getFullCourseDetails,editCourse,getInstructorCourses,deleteCourse,} = require("../controllers/Course");
 
 //category controllers Import 
-const { showAllcategories, createCategory,categoryPageDetails,} =require("../controllers/Category");
+const { showAllcategories, createCategory,categoryPageDetails,deleteCategory,} =require("../controllers/Category");
 
 // sections controllers Import 
 const {createSection,updateSection,deleteSection ,} =require("../controllers/Section");
@@ -20,6 +22,7 @@ const {createRating,getAverageRating,getAllRating,} =require("../controllers/Rat
 
 // updateCourseProgress
 const {updateCourseProgress} = require("../controllers/courseProgress");
+console.log("✅ updateCourseProgress imported:", typeof updateCourseProgress);
 
 //Importing Middlewares
 const {auth, isInstructor, isStudent, isAdmin,} = require("../middlewares/auth");
@@ -68,7 +71,14 @@ router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses);
 // Delete a Course
 router.delete("/deleteCourse", deleteCourse);
 
+// Test route
+router.post("/test-progress", (req, res) => {
+  console.log("🧪 TEST ROUTE HIT");
+  res.json({ success: true, message: "Test route works!" });
+});
+
 router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
+console.log("✅ Route registered: POST /api/v1/course/updateCourseProgress");
 
 
 
@@ -77,6 +87,7 @@ router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
 router.post("/createCategory", auth, isAdmin, createCategory);
 router.get("/showAllCategories", showAllcategories);
 router.post("/getCategoryPageDetails", categoryPageDetails);
+router.delete("/deleteCategory/:categoryId", auth, isAdmin, deleteCategory);
 
 
 // ------------------------ Rating and Review ---------------

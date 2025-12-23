@@ -71,7 +71,7 @@ const Signup = () => {
           </p>
         </div>
 
-        {/* Student-Instructor tabs */}
+        {/* Student-Instructor-Admin tabs */}
         <div className="flex bg-dark-100 p-1 gap-x-1 rounded-full border border-dark-200">
           <button
             className={`${
@@ -93,6 +93,16 @@ const Signup = () => {
           >
             Instructor
           </button>
+          <button
+            className={`${
+              accountType === "Admin"
+                ? "bg-dark-50 text-dark-900"
+                : "bg-transparent text-dark-600"
+            } py-2 px-5 rounded-full transition-all duration-200 w-full`}
+            onClick={() => setAccountType("Admin")}
+          >
+            Admin
+          </button>
         </div>
 
         <form onSubmit={handleOnSubmit} className="mt-8 space-y-6">
@@ -105,6 +115,7 @@ const Signup = () => {
                 <input
                   required
                   type="text"
+                  id="firstName"
                   name="firstName"
                   value={firstName}
                   onChange={handleOnChange}
@@ -119,6 +130,7 @@ const Signup = () => {
                 <input
                   required
                   type="text"
+                  id="lastName"
                   name="lastName"
                   value={lastName}
                   onChange={handleOnChange}
@@ -135,6 +147,7 @@ const Signup = () => {
               <input
                 required
                 type="email"
+                id="email"
                 name="email"
                 value={email}
                 onChange={handleOnChange}
@@ -152,6 +165,7 @@ const Signup = () => {
                   <input
                     required
                     type={showPassword ? "text" : "password"}
+                    id="password"
                     name="password"
                     value={password}
                     onChange={handleOnChange}
@@ -178,6 +192,7 @@ const Signup = () => {
                   <input
                     required
                     type={showConfirmPassword ? "text" : "password"}
+                    id="confirmPassword"
                     name="confirmPassword"
                     value={confirmPassword}
                     onChange={handleOnChange}

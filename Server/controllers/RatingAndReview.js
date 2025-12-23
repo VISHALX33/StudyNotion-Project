@@ -12,64 +12,89 @@ exports.createRating = async (req, res) =>{
         // fetch data from req body
         const {courseId, review, rating} =req.body;
 
-        // validation check user  is enrolled or not
-        const courseDetails = await Course.findOne(
-                                        {id:courseId,
-                                        studentsEnrolled: {$element: {$eq:userId} },
-                                        });
+        // Validation
+        if (!courseId || !review || !rating) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required",
+            });
+        }
+
+        // Rating and Review lie between 1 to 5
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({
+                success: false,
+                message: "Rating must be between 1 and 5",
+            });
+        }
+
+        // validation check user is enrolled or not
+        const courseDetails = await Course.findOne({
+            _id: courseId,
+            studentsEnrolled: { $elemMatch: { $eq: userId } },
+        });
                           
-                    if(!courseDetails){
-                        return res.status(404).json({
-                            success:false,
-                            message:"Student is not enrolled",
-                        });
-                    }
+        if(!courseDetails){
+            return res.status(404).json({
+                success:false,
+                message:"Student is not enrolled in this course",
+            });
+        }
 
-                    // Rating and Review lie between 1 to 5
-                    if (rating < 1 || rating > 5) {
-                        return res.status(400).json({
-                          success: false,
-                          message: "Rating must be between 1 and 5",
-                        });
-                      }
-
-                // user ne 2 baar rating tho nhi de hai
-                const alreadyReviewed = await RatingAndReview.findOne({
-                    user:userId,
-                    course:courseId,
-                });
+        // Check if user already reviewed this course
+        const alreadyReviewed = await RatingAndReview.findOne({
+            user:userId,
+            course:courseId,
+        });
+    
+        if(alreadyReviewed){
+            // Update existing review instead of rejecting
+            alreadyReviewed.rating = rating;
+            alreadyReviewed.review = review;
+            await alreadyReviewed.save();
             
-                if(!alreadyReviewed){
-                    return res.status(404).json({
-                        success:false,
-                        message:"You already Reviewed and Rating",
-                    });
+            // Populate user data
+            await alreadyReviewed.populate('user', 'firstName lastName image email');
+
+            console.log("Rating updated successfully:", alreadyReviewed);
+
+            return res.status(200).json({
+                success:true,
+                message:"Rating and Review updated successfully",
+                ratingReview: alreadyReviewed,
+            });
+        }
+
+        // create rating and review
+        const ratingReview = await RatingAndReview.create({
+            rating, 
+            review,
+            course:courseId,
+            user:userId,
+        });
+
+        // Populate user data in the created review
+        await ratingReview.populate('user', 'firstName lastName image email');
+
+        // update the course with new rating
+        const updatedCourseDetails = await Course.findByIdAndUpdate(
+            courseId,
+            {
+                $push: {
+                    ratingAndReviews:ratingReview._id,
                 }
+            },
+            {new: true}
+        );
 
-                // create rating and review
-                const ratingReview = await RatingAndReview.create({
-                                          rating, review,
-                                          course:courseId,
-                                          user:userId,
-                });
+        console.log("Rating created successfully:", ratingReview);  
 
-                // update the course with new rating
-        const updatedCourseDetails =  await Course.findByIdAndUpdate({_id:courseId},
-                           {
-                                $push: {
-                                    ratingAndReviews:ratingReview._id,
-                                }
-                           },
-                           {new: true});
-
-                 console.log(updatedCourseDetails);  
-
-                // return response
-                return res.status(200).json({
-                    success:true,
-                    message:"Rating and Review created successfully",
-                    ratingReview,
-                });
+        // return response
+        return res.status(200).json({
+            success:true,
+            message:"Rating and Review created successfully",
+            ratingReview,
+        });
                 
     }
     catch(error){
@@ -94,7 +119,7 @@ exports.getAverageRating = async (req, res) =>{
         const result = await RatingAndReview.aggregate([
             {
                 $match:{
-                    courses: new mongoose.Types.ObjectId(courseId),
+                    course: new mongoose.Types.ObjectId(courseId),
                 },
             },
             {
@@ -136,13 +161,13 @@ exports.getAllRating = async (req, res) => {
         .sort({ rating: -1 }) // high rating first 
         .populate({
           path: "user",
-          select: "firstName lastName email,image",
+          select: "firstName lastName email image",
         })
         .populate({
           path: "course",
           select: "courseName",
         })
-        exec();
+        .exec();
   
       return res.status(200).json({
         success: true,

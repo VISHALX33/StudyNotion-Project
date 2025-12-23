@@ -27,6 +27,8 @@ import EditCourse from './pages/EditCourse';
 import ViewCourse from './pages/ViewCourse';
 import CategoryPage from './pages/CategoryPage';
 import Checkout from './pages/Checkout';
+import AdminDashboard from './pages/AdminDashboard';
+import Reviews from './pages/Reviews';
 import './App.css';
 
 function App() {
@@ -50,6 +52,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/contact-us" element={<ContactUs />} />
               <Route path="/about" element={<About />} />
+              <Route path="/reviews" element={<Reviews />} />
               
               {/* Dashboard Routes */}
               <Route path="/dashboard/my-profile" element={<MyProfile />} />
@@ -57,6 +60,7 @@ function App() {
               <Route path="/dashboard/enrolled-courses" element={<EnrolledCourses />} />
               <Route path="/dashboard/student" element={<StudentDashboard />} />
               <Route path="/dashboard/instructor" element={<InstructorDashboard />} />
+              <Route path="/dashboard/admin" element={<AdminDashboard />} />
               <Route path="/dashboard/cart" element={<Cart />} />
               <Route path="/dashboard/checkout" element={<Checkout />} />
               <Route path="/dashboard/payment" element={<Checkout />} />

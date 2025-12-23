@@ -95,7 +95,7 @@ const SubSectionModal = ({ sectionId, course, setCourse, onClose, subsection = n
             <input
               type="text"
               {...register("title", { required: "Title is required" })}
-              className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-2 border text-black border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="Enter lecture title"
             />
             {errors.title && (
@@ -105,13 +105,13 @@ const SubSectionModal = ({ sectionId, course, setCourse, onClose, subsection = n
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-dark-800 mb-2">
+            <label className="block text-sm font-medium text-black mb-2">
               Lecture Description *
             </label>
             <textarea
               {...register("description", { required: "Description is required" })}
               rows="4"
-              className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-2 border text-black border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="Enter lecture description"
             />
             {errors.description && (
@@ -121,13 +121,13 @@ const SubSectionModal = ({ sectionId, course, setCourse, onClose, subsection = n
 
           {/* Duration */}
           <div>
-            <label className="block text-sm font-medium text-dark-800 mb-2">
+            <label className="block text-sm font-medium text-black mb-2">
               Duration (e.g., 10:30) *
             </label>
             <input
               type="text"
               {...register("timeDuration", { required: "Duration is required" })}
-              className="w-full px-4 py-2 border border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-2 border text-black border-dark-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="MM:SS"
             />
             {errors.timeDuration && (
@@ -137,7 +137,7 @@ const SubSectionModal = ({ sectionId, course, setCourse, onClose, subsection = n
 
           {/* Video Upload */}
           <div>
-            <label className="block text-sm font-medium text-dark-800 mb-2">
+            <label className="block text-sm font-medium text-black mb-2">
               Video File {!isEditing && "*"}
             </label>
             <div className="border-2 border-dashed border-dark-300 rounded-lg p-6 text-center">
@@ -168,7 +168,7 @@ const SubSectionModal = ({ sectionId, course, setCourse, onClose, subsection = n
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-dark-300 text-dark-900 rounded-md hover:bg-dark-100 transition"
+              className="flex-1 px-4 py-2 border border-dark-300 text-black  rounded-md hover:bg-dark-100 transition"
             >
               Cancel
             </button>

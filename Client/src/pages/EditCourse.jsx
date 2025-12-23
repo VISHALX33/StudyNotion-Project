@@ -3,8 +3,9 @@ import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { fetchCourseCategories, getFullDetailsOfCourse, editCourseDetails } from "../services/operations/courseAPI";
-import { FiUpload } from "react-icons/fi";
+import { FiUpload, FiArrowRight, FiCheck } from "react-icons/fi";
 import Spinner from "../components/common/Spinner";
+import CourseBuilder from "../components/core/Dashboard/CourseBuilder";
 
 const EditCourse = () => {
   const { courseId } = useParams();
@@ -15,6 +16,7 @@ const EditCourse = () => {
   const [categories, setCategories] = useState([]);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [course, setCourse] = useState(null);
+  const [step, setStep] = useState(1);
 
   const {
     register,
@@ -90,7 +92,8 @@ const EditCourse = () => {
 
     const result = await editCourseDetails(formData, token);
     if (result) {
-      navigate("/dashboard/my-courses");
+      setCourse(result);
+      setStep(2);
     }
 
     setLoading(false);
@@ -104,10 +107,45 @@ const EditCourse = () => {
     );
   }
 
+  const handleFinish = () => {
+    navigate("/dashboard/my-courses");
+  };
+
   return (
     <div className="min-h-screen bg-dark-100 py-10">
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-dark-900 mb-8">Edit Course</h1>
+        {/* Progress Indicator */}
+        <div className="mb-8">
+          <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                step >= 1 ? "bg-primary-500 text-white" : "bg-dark-200 text-dark-600"
+              }`}>
+                {step > 1 ? <FiCheck /> : "1"}
+              </div>
+              <span className={step >= 1 ? "text-dark-900 font-semibold" : "text-dark-600"}>
+                Course Information
+              </span>
+            </div>
+            <div className="w-16 h-1 bg-dark-200">
+              <div className={`h-full ${step >= 2 ? "bg-primary-500" : ""} transition-all`} />
+            </div>
+            <div className="flex items-center gap-2">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                step >= 2 ? "bg-primary-500 text-white" : "bg-dark-200 text-dark-600"
+              }`}>
+                2
+              </div>
+              <span className={step >= 2 ? "text-dark-900 font-semibold" : "text-dark-600"}>
+                Course Builder
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {step === 1 ? (
+          <>
+            <h1 className="text-3xl font-bold text-dark-900 mb-8">Edit Course</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Course Name */}
@@ -271,12 +309,39 @@ const EditCourse = () => {
             </button>
             <button
               type="submit"
-              className="px-6 py-3 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition font-semibold"
+              className="flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition font-semibold"
             >
-              Save Changes
+              Next: Edit Sections
+              <FiArrowRight />
             </button>
           </div>
         </form>
+          </>
+        ) : (
+          <>
+            <h1 className="text-3xl font-bold text-dark-900 mb-8">
+              Edit Course Content: {course?.courseName}
+            </h1>
+            
+            <CourseBuilder course={course} setCourse={setCourse} />
+            
+            <div className="mt-8 flex justify-between">
+              <button
+                onClick={() => setStep(1)}
+                className="px-6 py-3 border border-dark-300 text-dark-900 rounded-md hover:bg-dark-100 transition"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleFinish}
+                className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 transition font-semibold"
+              >
+                <FiCheck />
+                Finish Editing
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
